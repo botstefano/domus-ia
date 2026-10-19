@@ -1,0 +1,5 @@
+{
+  "name": "Domus IA",
+  "description": "Plataforma de diseño arquitectónico asistido por inteligencia artificial: describa su vivienda, recórrala en 3D y modifíquela en lenguaje natural.",
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
