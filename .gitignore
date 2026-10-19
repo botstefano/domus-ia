@@ -1,0 +1,26 @@
+# Dependencias
+node_modules/
+.pnpm-store/
+
+# Compilados
+dist/
+*.tsbuildinfo
+
+# Datos locales (contienen la base de datos de desarrollo)
+data/
+.tmp/
+apps/api/data/
+
+# Documentos generados localmente
+*.pdf
+!docs/*.pdf
+
+# Variables de entorno reales
+.env
+.env.local
+.env.*.local
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log

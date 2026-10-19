@@ -1,0 +1,29 @@
+requisito;descripcion;implementacion;prueba_o_evidencia
+RF-01;Registrar clientes;apps/api/clients;E2E: alta de proyecto con cliente
+RF-02;Crear proyectos;apps/api/projects;E2E: «proyecto creado con versión 1»
+RF-03;Registrar terreno;apps/api/projects + terrain;E2E: creación con terreno 10×20
+RF-04;Presupuesto, pisos y estilo;CreateProjectDto + program;Domain: «respeta el número de plantas, dormitorios y baños»
+RF-05;Guardado automático;Persistencia por versión;E2E: historial y versiones listadas
+RF-06;Consultar proyectos;GET /projects;E2E: listado y detalle
+RF-07;Duplicar proyectos;—;No implementado (ver sección 13)
+RF-08;Estados del proyecto;PATCH /projects/:id/status;E2E: aprobación cambia el estado
+RF-09;Interpretar descripción y ambigüedades;packages/assistant;NLU: «extrae requisitos» y «detecta información faltante»
+RF-10;Propuesta de distribución;program + layout;Domain: «distribuye los ambientes sin solaparse»
+RF-11;Modelo 3D estructurado;generateDesign + deriveWalls;Domain: «genera muros con vanos y acceso»
+RF-12;Visualizar y navegar;HouseScene (Three.js);Web: build + verificación manual del visor
+RF-13;Modificar por lenguaje natural;instruct + applyOperations;"NLU: 15 casos; E2E: instrucción y versión nueva"
+RF-14;Conservar lo no afectado;resize con reflujo local;Domain: «amplía la cocina conservando el resto»
+RF-15;Deshacer/rehacer/versiones;restore + design_versions;E2E: restauración y versiones
+RF-16;Comparar versiones;diffModels + /compare;"Domain: diff; E2E: comparación 1↔n"
+RF-17;Personalizar materiales y mobiliario;set_* + add_furniture;NLU: porcelanato, isla, colores
+RF-18;Actualizar costos;estimateCost en cada versión;"Domain: costos; E2E: costo por versión"
+RF-19;Planos y documentación;renderPlanSvg + reportPdf;"Domain: SVG; E2E: SVG y PDF"
+RF-20;Exportar documentos;export.json + SVG/PDF;E2E: exportación completa
+RF-21;Panel de control;GET /dashboard/summary;E2E: indicadores
+RF-22;Usuarios y seguridad;auth + guards;E2E: registro, perfil y acceso denegado
+RF-23;Auditoría;audit_events;E2E: auditoría con eventos
+RF-24;VR/AR;HouseScene.enterVR/enterAR;No probado en dispositivo (limitación)
+RF-25;Catálogo de materiales y mobiliario;materials + furniture_catalog;E2E: creación con catálogo sembrado
+RF-26;Revisión y aprobación;POST /approvals;E2E: «aprobación registrada»
+RF-27;Dictado por voz;—;No implementado (ver sección 13)
+RF-28;Interoperabilidad IFC/BIM;—;No implementado (ver sección 13)

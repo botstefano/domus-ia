@@ -1,0 +1,62 @@
+# ---------------------------------------------------------------------------
+# Domus IA - despliegue con PostgreSQL administrado por el propio Compose.
+#
+#   cp .env.example .env
+#   docker compose up --build
+#   docker compose exec api node apps/api/dist/scripts/migrate.js
+#   docker compose exec api node apps/api/dist/scripts/seed.js
+#
+# La API queda en http://localhost:3000/api y la interfaz en http://localhost:8080
+# ---------------------------------------------------------------------------
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: domus
+      POSTGRES_PASSWORD: domus
+      POSTGRES_DB: domus
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./apps/api/migrations/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U domus -d domus"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      DB_DRIVER: postgres
+      DATABASE_URL: postgresql://domus:domus@db:5432/domus?schema=public
+      JWT_SECRET: ${JWT_SECRET:-cambie-esta-clave-en-produccion}
+      JWT_EXPIRES_IN: 8h
+      WEB_ORIGIN: http://localhost:8080
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.openai.com/v1}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4o-mini}
+    ports:
+      - "3000:3000"
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+
+volumes:
+  db-data:

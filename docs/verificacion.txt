@@ -1,0 +1,87 @@
+Verificación de Domus IA — 2026-10-17 10:02:19
+
+=== 1. Compilación completa del monorepo (pnpm build) ===
+vite v5.4.21 building for production...
+transforming...
+✓ 42 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.64 kB │ gzip:   0.41 kB
+dist/assets/index-CNK6tg00.css   13.11 kB │ gzip:   3.40 kB
+dist/assets/index-BzSlXyGU.js   678.74 kB │ gzip: 182.99 kB
+✓ built in 4.27s
+$ tsc -p tsconfig.json
+$ tsc -p tsconfig.json
+$ tsc -p tsconfig.build.json
+
+=== 2. Pruebas del motor geométrico ===
+ ✓ test/operations.test.ts (13 tests) 244ms
+
+ Test Files  4 passed (4)
+      Tests  40 passed (40)
+   Start at  10:02:51
+   Duration  2.14s (transform 935ms, setup 0ms, collect 3.09s, tests 632ms, environment 2ms, prepare 1.86s)
+
+
+=== 3. Pruebas del intérprete de lenguaje natural ===
+ ✓ test/nlu.test.ts (22 tests) 61ms
+
+ Test Files  1 passed (1)
+      Tests  22 passed (22)
+   Start at  10:02:56
+   Duration  1.33s (transform 308ms, setup 0ms, collect 377ms, tests 61ms, environment 1ms, prepare 403ms)
+
+
+=== 4. Prueba de extremo a extremo (API completa) ===
+
+► Autenticación y estado del servicio
+  ✓ health responde ok
+  ✓ registro devuelve token
+  ✓ perfil autenticado
+  ✓ acceso sin token rechazado
+
+► Proyecto y generación del modelo
+  ✓ proyecto creado con versión 1
+  ✓ modelo generado con ambientes
+  ✓ modelo incluye cocina y dormitorios
+
+► Modificación en lenguaje natural
+  ✓ instrucción aceptada
+  ✓ se creó la versión 2
+  ✓ la cocina quedó en 14 m²
+  ✓ objetivo inalcanzable se aplica parcialmente y se explica
+  ✓ segunda modificación aplicada
+  ✓ detalle del proyecto con historial
+  ✓ fachada actualizada en el modelo
+  ✓ instrucción incomprensible devuelve 422
+
+► Versiones y comparación
+  ✓ versiones listadas
+  ✓ comparación entre versiones
+
+► Documentos
+  ✓ plano SVG generado
+  ✓ ficha PDF generada
+  ✓ exportación JSON completa
+
+► Revisión profesional y panel
+  ✓ aprobación registrada
+  ✓ panel con indicadores
+  ✓ auditoría con eventos
+
+► Documentación OpenAPI
+  ✓ especificación OpenAPI exportada
+
+Resultado: 24 verificaciones correctas, 0 fallidas.
+
+=== 5. Artefactos ===
+
+Name                               Length
+----                               ------
+Documentacion-Tecnica-DomusIA.docx  61883
+Documentacion-Tecnica-DomusIA.pdf  438102
+openapi.json                        21760
+trazabilidad.csv                     2534
+verificacion.txt                     2322
+
+

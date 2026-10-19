@@ -1,0 +1,27 @@
+{
+  "name": "domus-ia",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plataforma de diseño arquitectónico asistido por IA: requisitos en lenguaje natural -> modelo 3D editable y verificable.",
+  "packageManager": "pnpm@11.28.5",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "pnpm -r --workspace-concurrency=1 build",
+    "test": "pnpm -r --workspace-concurrency=1 test",
+    "test:domain": "pnpm --filter @domus/domain test",
+    "test:assistant": "pnpm --filter @domus/assistant test",
+    "dev:api": "pnpm --filter @domus/api start:dev",
+    "dev:web": "pnpm --filter @domus/web dev",
+    "db:migrate": "pnpm --filter @domus/api migrate",
+    "db:seed": "pnpm --filter @domus/api seed",
+    "e2e:api": "pnpm --filter @domus/api e2e"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@domus/assistant",
+  "version": "0.1.0",
+  "description": "Capa de interpretación: instrucciones en lenguaje natural -> operaciones geométricas estructuradas (reglas + adaptador LLM).",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@domus/domain": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
