@@ -122,6 +122,46 @@ function coerceIntent(raw: unknown): ParsedIntent {
   };
 }
 
+import { GoogleGenAI } from '@google/genai';
+
+/**
+ * Interpreta una instrucción usando Google Gemini AI con salida estructurada en JSON.
+ */
+export async function interpretWithGemini(
+  text: string,
+  model: DesignModel | undefined,
+  apiKey: string,
+): Promise<ParsedIntent> {
+  const ai = new GoogleGenAI({
+    apiKey,
+    httpOptions: {
+      headers: {
+        'User-Agent': 'aistudio-build',
+      },
+    },
+  });
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-3.8-flash',
+    contents: text,
+    config: {
+      systemInstruction: buildSystemPrompt(model),
+      responseMimeType: 'application/json',
+      temperature: 0.1,
+    },
+  });
+
+  const content = response.text;
+  if (!content) throw new Error('Gemini no devolvió contenido.');
+  const parsed = JSON.parse(content);
+  const result = coerceIntent(parsed);
+  return {
+    ...result,
+    source: 'gemini',
+    notes: ['Interpretado con Google Gemini 3.8 Flash y validado por el motor arquitectónico.'],
+  };
+}
+
 /**
  * Interpreta una instrucción usando un modelo de lenguaje con salida JSON.
  * Lanza una excepción si la respuesta no cumple el contrato; el orquestador
@@ -171,29 +211,53 @@ export async function interpretWithLlm(
 }
 
 /**
- * Punto de entrada del orquestador: usa el modelo de lenguaje cuando está
- * configurado y cae a las reglas deterministas ante cualquier fallo.
+ * Punto de entrada del orquestador:
+ * 1. Usa Google Gemini AI si GEMINI_API_KEY está presente.
+ * 2. Si no, usa el proveedor LLM personalizado si está configurado.
+ * 3. Si no hay claves o falla la red, cae al motor determinista por reglas.
  */
 export async function interpret(
   text: string,
   context: InterpretationContext = {},
   options: InterpretationOptions = {},
 ): Promise<ParsedIntent> {
-  const rules = parseInstruction(text, context);
-  if (!options.llm || !options.llm.apiKey) return rules;
-
-  try {
-    return await interpretWithLlm(text, context.model, options.llm, options.fetchImpl ?? fetch);
-  } catch (error) {
-    const reason = error instanceof Error ? error.message : String(error);
-    return {
-      ...rules,
-      notes: [
-        ...rules.notes,
-        `No se pudo usar el modelo de lenguaje (${reason}); se aplicó la interpretación determinista por reglas.`,
-      ],
-    };
+  // 1. Google Gemini AI si está disponible
+  const geminiKey = process.env.GEMINI_API_KEY;
+  if (geminiKey) {
+    try {
+      return await interpretWithGemini(text, context.model, geminiKey);
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      const fallback = parseInstruction(text, context);
+      return {
+        ...fallback,
+        notes: [
+          ...fallback.notes,
+          `Fallo en Gemini (${reason}); se aplicó la interpretación determinista por reglas.`,
+        ],
+      };
+    }
   }
+
+  // 2. Modelo LLM personalizado (OpenAI u otro) si está configurado
+  if (options.llm && options.llm.apiKey) {
+    try {
+      return await interpretWithLlm(text, context.model, options.llm, options.fetchImpl ?? fetch);
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      const fallback = parseInstruction(text, context);
+      return {
+        ...fallback,
+        notes: [
+          ...fallback.notes,
+          `No se pudo usar el modelo de lenguaje (${reason}); se aplicó la interpretación determinista por reglas.`,
+        ],
+      };
+    }
+  }
+
+  // 3. Motor determinista por reglas
+  return parseInstruction(text, context);
 }
 
 /** Resumen legible de la interpretación, listo para mostrar en el chat. */

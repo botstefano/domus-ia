@@ -27,6 +27,7 @@
     "vitest": "^2.1.8"
   },
   "dependencies": {
+    "@google/genai": "^2.30.0",
     "@vitejs/plugin-react": "^4.3.4",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",

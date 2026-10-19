@@ -15,7 +15,7 @@ export interface ParsedIntent {
   /** Explicación en lenguaje natural de lo que se entendió. */
   explanation: string;
   confidence: number;
-  source: 'rules' | 'llm';
+  source: 'rules' | 'llm' | 'gemini';
   /** Fragmentos que no se pudieron interpretar. */
   unresolved: string[];
   notes: string[];
