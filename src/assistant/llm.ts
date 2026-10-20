@@ -141,8 +141,10 @@ export async function interpretWithGemini(
     },
   });
 
+  const modelName = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+
   const response = await ai.models.generateContent({
-    model: 'gemini-3.8-flash',
+    model: modelName,
     contents: text,
     config: {
       systemInstruction: buildSystemPrompt(model),
@@ -158,7 +160,7 @@ export async function interpretWithGemini(
   return {
     ...result,
     source: 'gemini',
-    notes: ['Interpretado con Google Gemini 3.8 Flash y validado por el motor arquitectónico.'],
+    notes: [`Interpretado con Google Gemini (${modelName}) y validado por el motor arquitectónico.`],
   };
 }
 
@@ -222,7 +224,7 @@ export async function interpret(
   options: InterpretationOptions = {},
 ): Promise<ParsedIntent> {
   // 1. Google Gemini AI si está disponible
-  const geminiKey = process.env.GEMINI_API_KEY;
+  const geminiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
   if (geminiKey) {
     try {
       return await interpretWithGemini(text, context.model, geminiKey);
