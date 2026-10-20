@@ -79,9 +79,10 @@ Responde EXCLUSIVAMENTE con un objeto JSON con este formato:
 }
 
 Reglas:
-- Si la instrucción pide generar una vivienda nueva, usa "generate" y llena "requirements".
-- Si pide cambiar algo del modelo existente, usa "modify" y usa identificadores reales.
-- Si falta información imprescindible, agrega preguntas en "clarifications".
+- Si el usuario saluda, hace preguntas generales o dice que viene a cambiar el diseño sin especificar aún la orden exacta (por ejemplo: "hola, como estas, vengo a cambiar el diseño"), responde amablemente con intent="clarify", operations=[], una respuesta cordial y orientadora en "explanation", y sugerencias concretas en "clarifications" sobre qué ambientes o acabados de esta vivienda puede modificar.
+- Si la instrucción pide generar una vivienda nueva o rediseñar desde cero, usa "generate" y llena "requirements".
+- Si pide cambiar algo del modelo existente (ampliar/reducir ambientes, pisos, colores, puertas, ventanas, fachada, cubierta), usa "modify" con identificadores reales del modelo y las operaciones de la lista.
+- Si falta información imprescindible o la orden es ambigua, agrega preguntas en "clarifications".
 - No devuelvas texto fuera del JSON.`;
 }
 
@@ -141,7 +142,10 @@ export async function interpretWithGemini(
     },
   });
 
-  const modelName = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  let modelName = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+  if (modelName === 'gemini-2.5-flash') {
+    modelName = 'gemini-3.8-flash';
+  }
 
   const response = await ai.models.generateContent({
     model: modelName,

@@ -662,6 +662,26 @@ export function parseInstruction(text: string, context: InterpretationContext = 
     };
   }
 
+  const isGreeting = /(^(hola|buenos dias|buenas tardes|buenas noches|que tal)|como estas|vengo a)/.test(normalized);
+  const hasSpecificTarget = /(dormitorio|habitacion|cocina|sala|bano|estudio|comedor|terraza|cochera|garage|piso|fachada|cubierta|techo|ventana|puerta|m2|metros|pared|muro)/.test(normalized);
+
+  if (isGreeting && !hasSpecificTarget) {
+    return {
+      intent: 'clarify',
+      operations: [],
+      clarifications: [
+        '¿Deseas ampliar o reducir algún ambiente (ej. "amplía la cocina a 16 m²")?',
+        '¿Quieres cambiar acabados (ej. "piso de la sala a porcelanato" o "fachada blanca")?',
+        '¿Prefieres agregar ventanales de piso a techo o una habitación adicional?',
+      ],
+      explanation: '¡Hola! Qué gusto saludarte. Estoy listo para ayudarte a modificar tu vivienda. Cuéntame qué cambios tienes en mente para este diseño.',
+      confidence: 0.9,
+      source: 'rules',
+      unresolved: [],
+      notes: [],
+    };
+  }
+
   const explicitGenerate =
     context.mode === 'generate' ||
     (/terreno/.test(normalized) && /(mide|m2|metros|de \\d+ x \\d+)/.test(normalized)) ||

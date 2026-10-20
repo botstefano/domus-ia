@@ -444,11 +444,19 @@ apiRouter.post('/projects/:id/instructions', async (req: Request, res: Response)
     }
 
     if (intent.operations.length === 0) {
-      return res.status(422).json({
-        message: intent.explanation,
+      return res.json({
+        intent,
+        version: current.version,
+        model: current.model,
+        cost: current.cost,
+        validation: current.validation,
+        applied: [],
+        rejected: [],
+        warnings: intent.notes,
+        changes: [],
+        summary: [],
         clarifications: intent.clarifications,
-        unresolved: intent.unresolved,
-        notes: intent.notes,
+        message: intent.explanation,
       });
     }
 

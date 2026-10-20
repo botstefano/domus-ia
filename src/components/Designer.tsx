@@ -184,16 +184,34 @@ export default function Designer({ projectId, user, onBack, onLogout }: Props): 
           return;
         }
         const result = raw as unknown as InstructionResponse;
-        applySnapshot({
-          model: result.model,
-          cost: result.cost,
-          validation: result.validation,
-          summary: undefined,
-        });
-        setPast((current) => [...current, previousVersion]);
-        setFuture([]);
-        pushMessage(describeResult(result));
-        await reload();
+        if (result.applied.length > 0 || (result.changes && result.changes.length > 0)) {
+          applySnapshot({
+            model: result.model,
+            cost: result.cost,
+            validation: result.validation,
+            summary: undefined,
+          });
+          setPast((current) => [...current, previousVersion]);
+          setFuture([]);
+          pushMessage(describeResult(result));
+          await reload();
+        } else {
+          const lines: string[] = [result.intent?.explanation || (raw as { message?: string }).message || 'Entendido.'];
+          if (result.clarifications && result.clarifications.length > 0) {
+            lines.push('', 'Sugerencias para este diseño:');
+            for (const question of result.clarifications) lines.push(`• ${question}`);
+          }
+          pushMessage({
+            role: 'assistant',
+            tone: 'normal',
+            text: lines.join('\n'),
+            meta: result.intent
+              ? `${result.intent.source === 'gemini' ? 'Google Gemini' : result.intent.source === 'llm' ? 'modelo de lenguaje' : 'asistente'} · confianza ${Math.round(
+                  (result.intent.confidence ?? 0.8) * 100,
+                )}%`
+              : undefined,
+          });
+        }
       } catch (error) {
         const payload = (error as { payload?: { clarifications?: string[]; rejected?: unknown[] } }).payload;
         const extra = payload?.clarifications?.length
